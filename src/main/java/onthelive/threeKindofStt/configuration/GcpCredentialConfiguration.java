@@ -1,5 +1,6 @@
 package onthelive.threeKindofStt.configuration;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
@@ -10,6 +11,9 @@ import java.util.Map;
 
 @Configuration
 public class GcpCredentialConfiguration {
+
+    @Value("${google.credential.key-directory}")
+    private String credentialKey;
 
     /*
      * GCP 사용을 위한 Credential 환경변수 처리 Configuration
@@ -52,10 +56,8 @@ public class GcpCredentialConfiguration {
         // GCP 사용을 위한 환경변수 적용 시작
         Map<String, String> google = new HashMap<>();
         google.put("GOOGLE_APPLICATION_CREDENTIALS",
-                "/Users/dalgakfoot/Downloads/threeKindofStt/skillful-eon-349406-6ce935293e40.json");
-//        google.put("GOOGLE_APPLICATION_CREDENTIALS",
-//                "/opt/gcpStt/credentials/credentials.json");
-
+                credentialKey);
+        
         setEnv(google);
         // GCP 사용을 위한 환경변수 적용 끝
     }

@@ -19,6 +19,7 @@ import org.springframework.batch.item.database.support.SqlPagingQueryProviderFac
 import org.springframework.batch.item.support.CompositeItemWriter;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskExecutor;
@@ -45,6 +46,9 @@ public class BatchConfiguration {
     private final Step afterSttUpdateSectionStep;
 
     private static final int CHUNK_SIZE = 1;
+
+    @Value("${project-type-code}")
+    private String projectTypeCode;
 
     // --------------- MultiThread --------------- //
 
@@ -102,7 +106,7 @@ public class BatchConfiguration {
         parameterValues.put("process_code", "STT");
         parameterValues.put("state" , "WAIT");
         parameterValues.put("state1", "FAIL");
-        parameterValues.put("project_type_code", "16-2-2"); // TODO property 로 별도로 관리하여 16번 에서도 사용할 수 있도록!
+        parameterValues.put("project_type_code", projectTypeCode); // TODO property 로 별도로 관리하여 16번 에서도 사용할 수 있도록!
 
         return new JdbcPagingItemReaderBuilder<SpeechToTextJob>()
                 .pageSize(CHUNK_SIZE)
@@ -123,6 +127,7 @@ public class BatchConfiguration {
         queryProvider.setSelectClause("select a.project_id as projectId, " +
                 "a.document_id as documentId, " +
                 "a.section_id as sectionId, " +
+                "a.id, " +
                 "a.id as segmentId, a.value, " +
                 "b.job_master_id as jobMasterId, " +
                 "c.job_sub_id as jobSubId, " +
@@ -151,7 +156,7 @@ public class BatchConfiguration {
         return new JdbcBatchItemWriterBuilder<SpeechToTextJob>()
                 .dataSource(dataSource)
                 .sql("insert into job_sub_results (job_master_id , job_sub_id , value) " +
-                        "values (:jobMasterId , :jobSubId , :targetText) " +
+                        "values (:jobMasterId , :jobSubId , :sttResult) " +
                         "on duplicate key update value = :sttResult, updated_datetime = now()")
                 .beanMapped()
                 .build();

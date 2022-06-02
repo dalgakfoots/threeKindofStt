@@ -10,6 +10,7 @@ import onthelive.threeKindofStt.service.gcp.GcpSpeechToTextService;
 import onthelive.threeKindofStt.service.naver.NaverSpeechToTextService;
 import onthelive.threeKindofStt.util.CommonUtil;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +26,9 @@ public class SpeechToTextProcessor implements ItemProcessor<SpeechToTextJob , Sp
     private final NaverSpeechToTextService naverSpeechToTextService;
 
     private final JdbcTemplate jdbcTemplate;
+
+    @Value("${dest-file}")
+    private String fileStore;
 
     @Override
     public SpeechToTextJob process(SpeechToTextJob item) throws Exception {
@@ -105,7 +109,7 @@ public class SpeechToTextProcessor implements ItemProcessor<SpeechToTextJob , Sp
     private String saveAndReturnFilePath(FileInfo fileInfo) throws IOException {
         String filePath = fileInfo.getFilePath();
         String fileName = fileInfo.getStorageFileName();
-        String destFile = "/Users/dalgakfoot/Documents/HUFS/fileStorage/" + fileName;
+        String destFile = fileStore + fileName;
 
         CommonUtil.saveFile(filePath , destFile);
         return destFile;

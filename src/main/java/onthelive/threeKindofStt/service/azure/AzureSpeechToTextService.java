@@ -5,12 +5,14 @@ import com.microsoft.cognitiveservices.speech.audio.AudioConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import onthelive.threeKindofStt.service.SpeechToTextService;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.Future;
 
 @Service
 @RequiredArgsConstructor
+@DependsOn(value = {"speechConfig"})
 @Slf4j
 public class AzureSpeechToTextService implements SpeechToTextService {
 

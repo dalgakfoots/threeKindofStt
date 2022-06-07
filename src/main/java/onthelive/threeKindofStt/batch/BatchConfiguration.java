@@ -2,6 +2,7 @@ package onthelive.threeKindofStt.batch;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import onthelive.threeKindofStt.batch.listener.NoWorkFoundStepExecutionListener;
 import onthelive.threeKindofStt.batch.step.SpeechToTextProcessor;
 import onthelive.threeKindofStt.entity.SpeechToTextJob;
 import org.springframework.batch.core.Job;
@@ -17,7 +18,6 @@ import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilde
 import org.springframework.batch.item.database.builder.JdbcPagingItemReaderBuilder;
 import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
 import org.springframework.batch.item.support.CompositeItemWriter;
-import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -92,6 +92,7 @@ public class BatchConfiguration {
                         updateJobSubsSetStateCompleteStt(),
                         updateSegmentSetStateCompleteStt()
                 ))
+                .listener(new NoWorkFoundStepExecutionListener())
                 .taskExecutor(executor(DEFAULT_POOL_SIZE))
                 .throttleLimit(DEFAULT_POOL_SIZE)
                 .build();
